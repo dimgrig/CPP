@@ -13,7 +13,8 @@ QMAKE_CXXFLAGS += -Wno-deprecated #-std=c++2a
 DISTFILES += \
     qmake-destination-path.pri \
     qmake-nc3-elmo-mbc-version.pri \
-    qmake-target-platform.pri
+    qmake-target-platform.pri \
+    resources/qtbase_ru.qm
 
 include(qmake-target-platform.pri)
 include(qmake-destination-path.pri)

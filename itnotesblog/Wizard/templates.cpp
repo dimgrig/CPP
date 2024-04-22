@@ -10,6 +10,44 @@ void TemplatesTest() {
     //IteratorTest();
     SliceTest();
     ZipTest();
+    {
+        {
+            std::vector<int> v{1, 2, 3, 4, 5};
+            double average_ref = 3;
+            double average = get_average(v);
+            ASSERT_EQUAL(average, average_ref);
+        }
+        {
+            std::vector<double> v{1.5, 2.5, 3.5, 4.5, 5.5};
+            double average_ref = 3.5;
+            double average = get_average(v);
+            ASSERT_EQUAL(average, average_ref);
+        }
+    }
+    {
+        {
+            std::vector<std::vector<int>> v = {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}};
+            std::vector<std::vector<int>> res_ref = {{1, 3, 5, 7, 9}, {2, 4, 6, 8, 10}};
+            auto res = vector_transpose<int>(v);
+            ASSERT_EQUAL(res, res_ref);
+        }
+        {
+            std::vector<std::vector<double>> v = {{1.5, 2}, {3.5, 4}, {5.5, 6}, {7.5, 8}, {9.5, 10}};
+            std::vector<std::vector<double>> res_ref = {{1.5, 3.5, 5.5, 7.5, 9.5}, {2, 4, 6, 8, 10}};
+            auto res = vector_transpose<double>(v);
+            ASSERT_EQUAL(res, res_ref);
+        }
+        {
+            std::vector<std::vector<TestValue>> v = {{TestValue(1), TestValue(2)}, {TestValue(3), TestValue(4)}};
+            std::vector<std::vector<int>> res_ref = {{1, 3}, {2, 4}};
+            auto res = vector_transpose<TestValue>(v);
+            for(const auto&[_res, _res_ref] : zip(res, res_ref)) {
+                for(const auto&[__res, __res_ref] : zip(_res, _res_ref)) {
+                    ASSERT_EQUAL(__res.get(), __res_ref);
+                }
+            }
+        }
+    }
 }
 
 //void IteratorTest(){

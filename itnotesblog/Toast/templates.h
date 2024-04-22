@@ -189,4 +189,30 @@ static std::map<V, K> reverse_map(const std::map<K, V> &m) {
     return r;
 }
 
+template<typename T>
+double get_average(std::vector<T> const& v)
+{
+    if (v.empty()) {
+        return 0;
+    }
+
+    return std::accumulate(v.begin(), v.end(), 0.0) / v.size();
+}
+
+template <typename T>
+std::vector<std::vector<T>> vector_transpose(const std::vector<std::vector<T>> data) {
+    std::vector<std::vector<T>> result(data[0].size(), std::vector<T>(data.size()));
+    for (unsigned int i = 0; i < data[0].size(); ++i) {
+        for (unsigned int j = 0; j < data.size(); ++j) {
+            result[i][j] = data[j][i];
+        }
+    }
+    return result;
+}
+
+template <typename To, typename From>
+To container_cast(From && from) {
+    return To(std::begin(from), std::end(from));
+}
+
 #endif //ASTRA_TEMPLATES_H
