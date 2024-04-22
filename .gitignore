@@ -52,3 +52,6 @@ compile_commands.json
 *creator.user*
 
 qmake-rmo-version.pri
+
+#binaries folder
+!*-binaries
