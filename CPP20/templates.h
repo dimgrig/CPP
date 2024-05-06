@@ -37,7 +37,7 @@ public:
     using reference         = T*&;
 
     explicit Iterator<T>(pointer ptr) : p_(ptr) {};
-    ~Iterator<T>() = default;
+    ~Iterator() = default;
 
     reference operator*() const { return *p_; }
     pointer operator->() { return p_; }

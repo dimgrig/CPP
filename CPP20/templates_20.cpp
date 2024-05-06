@@ -1,68 +1,106 @@
 #include "templates_20.h"
 
 
-void Templates20Test() {
-    {
-        //map
-        std::list<int> values_ref_l{1, 4, 9, 16, 25, 36, 49, 64, 81, 100};
-        std::list<int> values_l{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        auto values_res_l = map([](int i){return i*i;}, values_l);
-        ASSERT_EQUAL(values_res_l, values_ref_l);
-
-        std::vector pair_ref_v{{4, "Only"}, {3, "for"}, {7, "testing"}, {8, "purposes"}};
-        std::vector<std::string> str_v{"Only", "for", "testing", "purposes"};
-        auto pair_res_v = map([](const std::string& s){return std::make_pair(s.size(), s);}, str_v);
-        ASSERT_EQUAL(pair_res_v, pair_ref_v);
-    }
+void Macroses20Test() {
     {
         //filter
         std::vector<int> values_ref_v;
-        auto third_filter = [](int i){if (i % 3 == 0) return i;};
-        for(int i : std::views::iota(0) | std::views::filter(third_filter) || std::vies::take(10)) {
+        auto third_filter = [](int i){return (i % 3) == 0;};
+        for(int i : std::views::iota(0) | std::views::take(30) | std::views::filter(third_filter) ) {
             values_ref_v.push_back(i);
         }
 
-        std::vector<int> values_v(50);
-        std::iota(values_v.begin(), values_v.end(), 1);
+        std::vector<int> values_v(30);
+        std::iota(values_v.begin(), values_v.end(), 0);
         auto values_res_v = filter([](int i){return (i % 3) == 0;}, values_v);
-        ASSERT_EQUAL(values_res_l, values_ref_l);
+//        qCDebug(logDebug) << values_res_v;
+//        qCDebug(logDebug) << values_ref_v;
+        ASSERT_EQUAL(values_res_v, values_ref_v);
 
         std::vector<std::string> str_ref_v{"Only"};
         std::vector<std::string> str_v{"Only", "for", "testing", "purposes"};
-        auto str_res_v= filter([](const std::string& s){return std::isupper(s[0]);}, str_v);
+        auto str_res_v = filter([](const std::string& s){return std::isupper(s[0]);}, str_v);
+//        qCDebug(logDebug) << str_res_v;
+//        qCDebug(logDebug) << str_ref_v;
         ASSERT_EQUAL(str_res_v, str_ref_v);
     }
     {
-        //mapFilter
+        //map
+        std::vector<int> values_ref_v{1, 4, 9, 16, 25, 36, 49, 64, 81, 100};
+        std::vector<int> values_v{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        auto values_res_v = map([](int i){return i*i;}, values_v);
+//        qCDebug(logDebug) << values_res_v;
+//        qCDebug(logDebug) << values_ref_v;
+        ASSERT_EQUAL(values_res_v, values_ref_v);
+
+        std::vector<std::pair<unsigned long int, std::string>> pair_ref_v{{4, "Only"}, {3, "for"}, {7, "testing"}, {8, "purposes"}};
+        std::vector<std::string> str_v{"Only", "for", "testing", "purposes"};
+        auto pair_res_v = map([](const std::string& s){return std::make_pair(s.size(), s);}, str_v);
+//        qCDebug(logDebug) << pair_res_v;
+//        qCDebug(logDebug) << pair_ref_v;
+        ASSERT_EQUAL(pair_res_v, pair_ref_v);
+    }
+    {
+        //map_filter
         {
             std::vector<int> values_ref_v{1, 4, 9, 16, 25, 36, 49, 64, 81, 100};
             std::vector<int> values_v{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-            auto values_res_v = mapFilter([](int i){return i*i;}, values_v);
+            auto values_res_v = map_filter([](int i){return i*i;}, values_v);
+//            qCDebug(logDebug) << values_res_v;
+//            qCDebug(logDebug) << values_ref_v;
             ASSERT_EQUAL(values_res_v, values_ref_v);
         }
         {
             std::vector<int> values_ref_v{4, 16, 36, 64, 100};
             std::vector<int> values_v{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-            values_res_v = mapFilter([](int i){return i*i;}, values_v,
-                                     [](auto i){return i % 2 == 1;});
+            auto values_res_v = map_filter([](int i){return i*i;}, values_v,
+                                     [](auto i){return (i % 2) == 0;});
+//            qCDebug(logDebug) << values_res_v;
+//            qCDebug(logDebug) << values_ref_v;
             ASSERT_EQUAL(values_res_v, values_ref_v);
         }
         {
-            std::vector pair_ref_v{{4, "Only"}, {3, "for"}, {7, "testing"}, {8, "purposes"}};
+            std::vector<std::pair<unsigned long int, std::string>> pair_ref_v{{4, "Only"}, {3, "for"}, {7, "testing"}, {8, "purposes"}};
             std::vector<std::string> str_v{"Only", "for", "testing", "purposes"};
 
-            auto pair_res_v = mapFilter([](const std::string& s){return std::make_pair(s.size(), s);}, str_v);
+            auto pair_res_v = map_filter([](const std::string& s){return std::make_pair(s.size(), s);}, str_v);
+//            qCDebug(logDebug) << pair_res_v;
+//            qCDebug(logDebug) << pair_ref_v;
             ASSERT_EQUAL(pair_res_v, pair_ref_v);
         }
         {
-            std::vector pair_ref_v{{4, "Only"}};
+            std::vector<std::pair<unsigned long int, std::string>> pair_ref_v{{4, "Only"}};
             std::vector<std::string> str_v{"Only", "for", "testing", "purposes"};
 
-            auto pair_res_v = mapFilter([](const std::string& s){ return std::make_pair(s.size(), s); }, str_v,
+            auto pair_res_v = map_filter([](const std::string& s){ return std::make_pair(s.size(), s); }, str_v,
                                         [](const std::string& word){ return std::isupper(word[0]); });
+//            qCDebug(logDebug) << pair_res_v;
+//            qCDebug(logDebug) << pair_ref_v;
             ASSERT_EQUAL(pair_res_v, pair_ref_v);
+        }
+    }
+    {
+        //ContainerView
+        {
+            std::vector<int> values_ref_v{10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+            std::vector<int> values_v{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+            ContainerView container_view = ContainerView(values_v);
+            ContainerView values_res_v = std::views::reverse(container_view);
+//            qCDebug(logDebug) << values_res_v;
+//            qCDebug(logDebug) << values_ref_v;
+            ASSERT_EQUAL(values_res_v.to_vector(), values_ref_v);
+        }
+        {
+            std::string str = "Only for testing purpose";
+            std::string str_ref = str;
+            std::reverse(str_ref.begin(), str_ref.end());
+            ContainerView container_view = ContainerView(str);
+            ContainerView str_res = std::views::reverse(container_view);
+//            qCDebug(logDebug) << str_res;
+//            qCDebug(logDebug) << str_ref;
+            ASSERT_EQUAL(str_res.to_string(), str_ref);
         }
     }
 }

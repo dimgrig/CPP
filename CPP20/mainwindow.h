@@ -36,6 +36,7 @@
 #include "Logger.h"
 #include "macroses.h"
 #include "templates.h"
+#include "templates_20.h"
 #include "Sleeper.h"
 #include "TestRunner.h"
 
