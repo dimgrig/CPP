@@ -16,7 +16,8 @@ MainWindow::MainWindow(QWidget *parent)
     TestRunner tr;
     RUN_TEST(tr, FunctionsTest);
     RUN_TEST(tr, MacrosesTest);
-    RUN_TEST(tr, Macroses20Test);
+    RUN_TEST(tr, TemplatesTest);
+    RUN_TEST(tr, Templates20Test);
 
     this->setFont(QFont("Noto Sans", 10)); //10
     //qCDebug(logDebug()) << this->font();

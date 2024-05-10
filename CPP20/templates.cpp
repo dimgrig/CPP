@@ -291,15 +291,6 @@ void TypeTraitsTest() {
     }
     {
         //custom type traits
-        class ClassRenderable {
-        public:
-            bool render() {
-                //std::cout << "Some render: ><((((`>";
-                return true;
-            }
-        };
-        class ClassNotRenderable {};
-
         ClassRenderable renderable;
         ClassNotRenderable not_renderable;
 

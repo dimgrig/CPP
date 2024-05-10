@@ -15,7 +15,7 @@
 #include "templates_cout.h"
 #include "TestRunner.h"
 
-void Macroses20Test();
+void Templates20Test();
 
 template <typename Func, typename Seq>
 auto filter(Func func, const Seq& seq) {

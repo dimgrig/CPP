@@ -1,7 +1,7 @@
 #include "templates_20.h"
 
 
-void Macroses20Test() {
+void Templates20Test() {
     {
         //filter
         std::vector<int> values_ref_v;

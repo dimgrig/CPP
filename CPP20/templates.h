@@ -216,7 +216,17 @@ To container_cast(From && from) {
 template <typename>
 struct is_renderable : std::false_type {};
 
-class ClassRenderable;
+//must be before template!!!
+class ClassRenderable {
+public:
+    bool render() {
+        //std::cout << "Some render: ><((((`>";
+        return true;
+    }
+};
+
+class ClassNotRenderable {};
+
 template <>
 struct is_renderable<ClassRenderable> : std::true_type {};
 
