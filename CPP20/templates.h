@@ -1,9 +1,5 @@
-//
-// Created by Dima on 06.03.2021.
-//
-
-#ifndef ASTRA_TEMPLATES_H
-#define ASTRA_TEMPLATES_H
+#ifndef TEMPLATES_H
+#define TEMPLATES_H
 
 #include <iterator>
 #include <vector>
@@ -15,6 +11,7 @@ void TemplatesTest();
 void IteratorTest();
 void SliceTest();
 void ZipTest();
+void TypeTraitsTest();
 
 
 class TestValue {
@@ -215,4 +212,20 @@ To container_cast(From && from) {
     return To(std::begin(from), std::end(from));
 }
 
-#endif //ASTRA_TEMPLATES_H
+//type_traits
+template <typename>
+struct is_renderable : std::false_type {};
+
+class ClassRenderable;
+template <>
+struct is_renderable<ClassRenderable> : std::true_type {};
+
+template <typename T>
+bool check_renderable(T obj) {
+    if constexpr (is_renderable<T>::value) {
+        return obj.render();
+    } else {
+        return false;
+    }
+}
+#endif //TEMPLATES_H

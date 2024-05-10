@@ -10,6 +10,7 @@ void TemplatesTest() {
     //IteratorTest();
     SliceTest();
     ZipTest();
+    TypeTraitsTest();
     {
         {
             std::vector<int> v{1, 2, 3, 4, 5};
@@ -274,3 +275,35 @@ void ZipTest() {
     }
 }
 
+void TypeTraitsTest() {
+    {
+        //type_traits
+        class Base {};
+        class Derived : public Base {};
+        Base b;
+        Derived d;
+
+        ASSERT_EQUAL(std::is_integral_v<int>, true);
+        ASSERT_EQUAL(std::is_integral_v<std::string>, false);
+
+        ASSERT_EQUAL((std::is_same_v<decltype(b), Base>), true);
+        ASSERT_EQUAL((std::is_base_of_v<Base, decltype(d)>), true);
+    }
+    {
+        //custom type traits
+        class ClassRenderable {
+        public:
+            bool render() {
+                //std::cout << "Some render: ><((((`>";
+                return true;
+            }
+        };
+        class ClassNotRenderable {};
+
+        ClassRenderable renderable;
+        ClassNotRenderable not_renderable;
+
+        ASSERT_EQUAL(check_renderable(renderable), true);
+        ASSERT_EQUAL(check_renderable(not_renderable), false);
+    }
+}
