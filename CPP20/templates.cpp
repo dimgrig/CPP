@@ -11,6 +11,7 @@ void TemplatesTest() {
     SliceTest();
     ZipTest();
     TypeTraitsTest();
+    ScopeGuardTest();
     {
         {
             std::vector<int> v{1, 2, 3, 4, 5};
@@ -296,5 +297,143 @@ void TypeTraitsTest() {
 
         ASSERT_EQUAL(check_renderable(renderable), true);
         ASSERT_EQUAL(check_renderable(not_renderable), false);
+    }
+}
+
+void ScopeGuardTest() {
+    class Record {};
+    Record r;
+
+    class Database {
+        public:
+            void _do(const Record &r) {_done = true;};
+            void insert(const Record &r) {_inserted = true; this->finalize();};
+            void broken_insert(const Record &r) {_inserted = false; this->finalize();}; //exception or something
+            void broken_insert_exception(const Record &r) {throw std::invalid_argument(""); this->finalize();}; //exception or something
+            void undo() {_done = false;}; //rollback
+            void finalize() {_finalize = true;};
+            bool inserted() const {return _inserted;};
+            bool done() const {return _done;};
+            bool finalized() const {return _finalize;};
+        private:
+            bool _done = false;
+            bool _inserted = false;
+            bool _finalize = false;
+    };
+
+    {
+        // all works
+        Database db;
+        db._do(r);
+        db.insert(r);
+        db.finalize();
+        ASSERT_EQUAL(db.done(), true);
+        ASSERT_EQUAL(db.inserted(), true);
+        ASSERT_EQUAL(db.finalized(), true);
+    }
+    {
+        // exception in isnsert after done - done not rollback
+        Database db;
+        db._do(r);
+        db.broken_insert(r);
+        db.finalize();
+        ASSERT_EQUAL(db.done(), true);
+        ASSERT_EQUAL(db.inserted(), false);
+        ASSERT_EQUAL(db.finalized(), true);
+    }
+    {
+        // exception in isnsert after done - rollback manually
+        Database db;
+        db._do(r);
+        db.broken_insert(r);
+        db.undo();
+        ASSERT_EQUAL(db.done(), false);
+        ASSERT_EQUAL(db.inserted(), false);
+        ASSERT_EQUAL(db.finalized(), true);
+    }
+    {
+        // ScopeGuard - exception in isnsert after done
+        // - done rollbacked by ScopeGuard
+        // - but not finelized cause exception
+        Database db;
+        auto insert = [](Database &db, const Record &r) {
+            db._do(r);
+            auto sg = MakeGuard([&](){db.undo();});
+            db.broken_insert_exception(r);
+            sg.commit();
+        };
+        try { //this try for do ASSERT after
+            insert(db, r);
+        } catch (...) {
+
+        }
+        ASSERT_EQUAL(db.done(), false);
+        ASSERT_EQUAL(db.inserted(), false);
+        ASSERT_EQUAL(db.finalized(), false);
+    }
+    {
+        // ScopeGuard - exception in isnsert after done
+        // - done rollbacked by ScopeGuard
+        // - finelized by another not commited ScopeGuard
+        Database db;
+        auto insert = [](Database &db, const Record &r) {
+            db._do(r);
+            auto sg = MakeGuard([&](){db.undo();});
+            auto sgf = MakeGuard([&](){db.finalize();});
+            db.broken_insert_exception(r);
+            sg.commit();
+        };
+        try { //this try for do ASSERT after
+            insert(db, r);
+        } catch (...) {
+
+        }
+        ASSERT_EQUAL(db.done(), false);
+        ASSERT_EQUAL(db.inserted(), false);
+        ASSERT_EQUAL(db.finalized(), true);
+    }
+    {
+        // C++17 - without MakeGuard
+        // ScopeGuard - exception in isnsert after done
+        // - done rollbacked by ScopeGuard
+        // - finelized by another not commited ScopeGuard
+        Database db;
+        auto insert = [](Database &db, const Record &r) {
+            db._do(r);
+            auto sg = ScopeGuard([&](){db.undo();});
+            auto sgf = ScopeGuard([&](){db.finalize();});
+            db.broken_insert_exception(r);
+            sg.commit();
+        };
+        try { //this try for do ASSERT after
+            insert(db, r);
+        } catch (...) {
+
+        }
+        ASSERT_EQUAL(db.done(), false);
+        ASSERT_EQUAL(db.inserted(), false);
+        ASSERT_EQUAL(db.finalized(), true);
+    }
+    {
+        // macroses
+        // ScopeGuard - exception in isnsert after done
+        // - done rollbacked by ScopeGuard
+        // - finelized by another not commited ScopeGuard
+        Database db;
+        auto insert = [](Database &db, const Record &r) {
+            db._do(r);
+            ON_SCOPE_EXIT{db.finalize();};
+            ON_SCOPE_EXIT_ROLLBACK(SG){db.undo();};
+            db.broken_insert_exception(r);
+            SG.commit();
+        };
+        try { //this try for do ASSERT after
+            insert(db, r);
+        } catch (...) {
+
+        }
+        ASSERT_EQUAL(db.done(), false);
+        ASSERT_EQUAL(db.inserted(), false);
+        ASSERT_EQUAL(db.finalized(), true);
     }
 }

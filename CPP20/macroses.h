@@ -14,6 +14,15 @@ void MacrosesTest();
 
 #define UNUSED(x) (void)(x)
 
+#define CONCAT2(x, y) x##y
+#define CONCAT(x, y) CONCAT2(x, y)
+//ANON_VAR - генерирует уникальное имя для переменной х
+#ifdef __COUNTER__
+    #define ANON_VAR(x) CONCAT(x, __COUNTER__)
+#else
+    #define ANON_VAR(x) CONCAT(x, __LINE__)
+#endif
+
 #define SET_TRISTATE(S) \
 S->exclusive(); \
 S->addButton(ui->S##_Down, 2); \

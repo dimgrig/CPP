@@ -4,6 +4,7 @@
 #include <iterator>
 #include <vector>
 
+#include "macroses.h"
 #include "templates_cout.h"
 #include "TestRunner.h"
 
@@ -12,6 +13,7 @@ void IteratorTest();
 void SliceTest();
 void ZipTest();
 void TypeTraitsTest();
+void ScopeGuardTest();
 
 
 class TestValue {
@@ -238,4 +240,49 @@ bool check_renderable(T obj) {
         return false;
     }
 }
+
+class ScopeGuardBase {
+public:
+    ScopeGuardBase( ) : _commit(false) {};
+    void commit() const noexcept {this->_commit = true;};
+protected:
+    ~ScopeGuardBase() {};
+    ScopeGuardBase(ScopeGuardBase&& r) : _commit(r._commit) {r.commit();};
+    mutable bool _commit;
+private:
+    ScopeGuardBase& operator=(const ScopeGuardBase&) = delete;
+};
+
+template <typename F>
+class ScopeGuard : public ScopeGuardBase {
+public:
+    ScopeGuard(F&& f) : _f(f) {};
+    ScopeGuard(const F &f) : _f(f) {};
+    ~ScopeGuard() {if (!_commit) _f();};
+    ScopeGuard(ScopeGuard&& r)
+        : ScopeGuardBase(std::move(r)),
+        _f(r._f)
+    {};
+private:
+    F _f;
+};
+
+template <typename F>
+ScopeGuard<F> MakeGuard(F&& f) {
+    return ScopeGuard<F>(std::forward<F>(f));
+}
+
+struct ScopeGuardMacros{};
+template <typename F>
+ScopeGuard<F> operator+(ScopeGuardMacros, F&& f) {
+    return ScopeGuard<F>(std::forward<F>(f));
+}
+
+#define ON_SCOPE_EXIT \
+auto ANON_VAR(SCOPE_EXIT_STATE) = ScopeGuardMacros() + [&]()
+
+#define ON_SCOPE_EXIT_ROLLBACK(NAME) \
+    auto NAME = ScopeGuardMacros() + [&]()
+
+
 #endif //TEMPLATES_H
