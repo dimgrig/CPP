@@ -23,9 +23,12 @@ DEFINES += NOUSER
 
 SOURCES += \
     Config.cpp \
+    DebugDecorator.cpp \
+    Decorator.cpp \
     Logger.cpp \
     Profiler.cpp \
     Sleeper.cpp \
+    SmartPtr.cpp \
     Visitor.cpp \
     aqp.cpp \
     functions.cpp \
@@ -38,9 +41,12 @@ SOURCES += \
 
 HEADERS += \
     Config.h \
+    DebugDecorator.h \
+    Decorator.h \
     Logger.h \
     Profiler.h \
     Sleeper.h \
+    SmartPtr.h \
     TestRunner.h \
     Visitor.h \
     aqp.h \
