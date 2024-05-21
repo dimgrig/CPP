@@ -3,6 +3,7 @@
 
 #include <locale.h>
 
+#include "Adapter.h"
 #include "DebugDecorator.h"
 #include "Decorator.h"
 #include "SmartPtr.h"
@@ -21,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     TestRunner tr;
     RUN_TEST(tr, FunctionsTest);
     RUN_TEST(tr, MacrosesTest);
+    RUN_TEST(tr, AdapterTest);
     RUN_TEST(tr, DebugDecoratorTest);
     RUN_TEST(tr, DecoratorTest);
     RUN_TEST(tr, SmartPtrTest);

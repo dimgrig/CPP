@@ -22,6 +22,7 @@ DEFINES += NOCRYPT #fix DOMDocument ambigious with qcustomplot
 DEFINES += NOUSER
 
 SOURCES += \
+    Adapter.cpp \
     Config.cpp \
     DebugDecorator.cpp \
     Decorator.cpp \
@@ -40,6 +41,7 @@ SOURCES += \
     templates_cout.cpp
 
 HEADERS += \
+    Adapter.h \
     Config.h \
     DebugDecorator.h \
     Decorator.h \

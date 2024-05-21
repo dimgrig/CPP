@@ -20,6 +20,13 @@
   AssertEqual(x, y, os.str());          \
 }
 
+#define ASSERT_NOT_EQUAL(x, y) {            \
+  std::ostringstream os;                     \
+  os << #x << " != " << #y << ", "      \
+    << __FILE__ << ":" << __LINE__;     \
+  AssertNotEqual(x, y, os.str());          \
+}
+
 #define ASSERT(x) {                     \
   std::ostringstream os;                     \
   os << #x << " is false, "             \
@@ -52,6 +59,19 @@ void AssertEqual(const T& t, const U& u, const std::string& hint = {}) {
         throw std::runtime_error(os.str());
     }
 }
+
+template<class T, class U>
+void AssertNotEqual(const T& t, const U& u, const std::string& hint = {}) {
+    if ((t == u)) {
+        std::ostringstream os;
+        os << "Assertion failed: " << t << " != " << u;
+        if (!hint.empty()) {
+            os << " hint: " << hint;
+        }
+        throw std::runtime_error(os.str());
+    }
+}
+
 
 inline void Assert(bool b, const std::string& hint) {
     AssertEqual(b, true, hint);
