@@ -104,4 +104,21 @@ QDebug operator<<(QDebug os, const ContainerView<T>& c) {
     return os << "[" << QString::fromStdString(Join(c, ',')) << "]";
 }
 
+//c++ 17 returne type resolver
+class from_string {
+public:
+    from_string(const char *str) : _str(str) {}
+    template <typename type>
+    operator type(){
+        //std::cout << typeid(type).name() << std::endl;
+        if constexpr(std::is_same_v<type, float>) {
+            return stof(_str);
+        } else if (std::is_same_v<type, int>) {
+            return stoi(_str);
+        }
+    }
+private:
+    const std::string _str;
+};
+
 #endif // TEMPLATES_20_H

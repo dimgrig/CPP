@@ -103,6 +103,14 @@ void Templates20Test() {
             ASSERT_EQUAL(str_res.to_string(), str_ref);
         }
     }
+    {
+        //c++ 17 returne type resolver
+        int n_int = from_string("123");
+        float n_float = from_string("123,111"); //or 123.111 - locale
+        ASSERT_EQUAL(n_int, 123);
+        //ASSERT_EQUAL(n_float, 123.111);
+        ASSERT(std::abs(n_float - 123.111) < std::numeric_limits<float>::epsilon());
+    }
 }
 
 
