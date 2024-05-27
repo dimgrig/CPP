@@ -31,6 +31,7 @@ SOURCES += \
     Sleeper.cpp \
     SmartPtr.cpp \
     Visitor.cpp \
+    VisitorSerializer.cpp \
     aqp.cpp \
     functions.cpp \
     macroses.cpp \
@@ -51,6 +52,7 @@ HEADERS += \
     SmartPtr.h \
     TestRunner.h \
     Visitor.h \
+    VisitorSerializer.h \
     aqp.h \
     functions.h \
     icons.h \

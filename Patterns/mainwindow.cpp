@@ -8,6 +8,7 @@
 #include "Decorator.h"
 #include "SmartPtr.h"
 #include "Visitor.h"
+#include "VisitorSerializer.h"
 
 const int StatusTimeout = AQP::MSecPerSecond * 10;
 
@@ -27,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     RUN_TEST(tr, DecoratorTest);
     RUN_TEST(tr, SmartPtrTest);
     RUN_TEST(tr, VisitorTest);
+    RUN_TEST(tr, VisitorSerializerTest);
 
     this->setFont(QFont("Noto Sans", 10)); //10
     //qCDebug(logDebug()) << this->font();
