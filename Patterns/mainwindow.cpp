@@ -7,6 +7,7 @@
 #include "DebugDecorator.h"
 #include "Decorator.h"
 #include "SmartPtr.h"
+#include "VariantVisitor.h"
 #include "Visitor.h"
 #include "VisitorSerializer.h"
 
@@ -21,14 +22,15 @@ MainWindow::MainWindow(QWidget *parent)
     //qCDebug(logDebug()) << this->ui->dw_batch_parameters->height();
 
     TestRunner tr;
-    RUN_TEST(tr, FunctionsTest);
-    RUN_TEST(tr, MacrosesTest);
-    RUN_TEST(tr, AdapterTest);
-    RUN_TEST(tr, DebugDecoratorTest);
-    RUN_TEST(tr, DecoratorTest);
-    RUN_TEST(tr, SmartPtrTest);
-    RUN_TEST(tr, VisitorTest);
-    RUN_TEST(tr, VisitorSerializerTest);
+//    RUN_TEST(tr, FunctionsTest);
+//    RUN_TEST(tr, MacrosesTest);
+//    RUN_TEST(tr, AdapterTest);
+//    RUN_TEST(tr, DebugDecoratorTest);
+//    RUN_TEST(tr, DecoratorTest);
+//    RUN_TEST(tr, SmartPtrTest);
+    RUN_TEST(tr, VariantVisitorTest);
+//    RUN_TEST(tr, VisitorTest);
+//    RUN_TEST(tr, VisitorSerializerTest);
 
     this->setFont(QFont("Noto Sans", 10)); //10
     //qCDebug(logDebug()) << this->font();

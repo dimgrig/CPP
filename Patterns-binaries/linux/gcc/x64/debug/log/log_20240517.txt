@@ -1,3 +1,0 @@
-2024-05-17 17:16:14.191 [Info]  : RMO_diode started
-2024-05-17 17:22:41.194 [Info]  : RMO_diode started
-2024-05-17 17:25:40.529 [Info]  : RMO_diode started

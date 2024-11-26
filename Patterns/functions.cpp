@@ -1,5 +1,7 @@
 #include "functions.h"
 
+#include "enums.h"
+
 //bool string_replace(std::string& str, const std::string& from, const std::string& to) {
 //    size_t start_pos = str.find(from);
 //    if(start_pos == std::string::npos)
@@ -31,6 +33,14 @@ bool string_replace(std::string& str, const std::string& from, const std::string
 
 int round_up_to_value(int value, int value_to_round) {
     return ((value + value_to_round - 1) / value_to_round) * value_to_round;
+}
+
+int round_down_to_value(int value, int value_to_round) {
+    if (value_to_round != 0) {
+        return (value / value_to_round) * value_to_round;
+    } else {
+        return 0;
+    }
 }
 
 std::string TRANSLATION_EN_RU(std::string EN) {
@@ -148,6 +158,52 @@ unsigned int extract_outcome_id(const QString str) {
     return res.toInt();
 }
 
+////|-Uзи ут||Uзи ут|Uзи изм|Uзи|-Iз изм|Iз изм|Uпр|Iпр|Uобр|Iобр|Iс изм|Iс max огр|Iс инд огр|Iс max|Iс инд|Iс|Rси|S|Uси изм|Uси|Uис
+//|Uзи ут|Uзи изм|Uзи|Iз изм|Uпр|Iпр|Uобр|Iобр|Iс изм|Iс max|Iс инд|Iс|Rси|S|Uси изм|Uси|Uис
+QString extract_name(const QString str) {
+//    QStringList sn_sl_re;
+//    for (auto s : SignalName_sl_re()) {
+//        s.replace("|", "[|]");
+//        sn_sl_re.push_back(s);
+//    }
+//    //qCDebug(logDebug) << sn_sl_re;
+    QString signal_names = SignalName_sl_re.join("|");
+    QRegularExpression rx("(" + signal_names + ")");
+    QString res = "";
+    QRegularExpressionMatchIterator i = rx.globalMatch(str);
+    if (i.hasNext()) {
+        QRegularExpressionMatch match = i.next();
+        res = match.captured(0);
+        //qCDebug(logDebug()) << res;
+    }
+    return res;
+}
+
+QString extract_signal_type(const QString str) {
+    QRegularExpression rx("(U|I|R|S)");
+    QString res = "";
+    QRegularExpressionMatchIterator i = rx.globalMatch(str);
+    if (i.hasNext()) {
+        QRegularExpressionMatch match_su = i.next();
+        res = match_su.captured(0);
+        //qCDebug(logDebug()) << res;
+    }
+    return res;
+}
+
+QString extract_testType(const QString str) {
+    QString test_types = TestTypes_re.join("|");
+    QRegularExpression rx("(" + test_types + ")"); //Контактирование|Обратный ток|Прямое напряжение //Импульсный ток стока Iс(и) max
+    QString res = "";
+    QRegularExpressionMatchIterator i = rx.globalMatch(str);
+    if (i.hasNext()) {
+        QRegularExpressionMatch match = i.next();
+        res = match.captured(0);
+        //qCDebug(logDebug()) << res;
+    }
+    return res;
+}
+
 QString extract_standardUnit(const QString str) {
     QRegularExpression rx("([0-9][ ])(нс|мкс|мс|с|"
                                         "нА|мкА|мА|А|кА|МА|ГА|"
@@ -226,17 +282,38 @@ double extract_tolerance(const QString str) {
     return res.replace(separator_comma, separator_point).toDouble();
 }
 
-double invert_double_order(double value) {
-    //0x408ee80000000000 -> 0x00000000e800408e
-    uint16_t *p = (uint16_t *)&value;
-    uint16_t ar[4] = {0,0,0,0};
-    ar[0] = *(p + 3);
-    ar[1] = *(p + 2);
-    ar[2] = *(p + 1);
-    ar[3] = *(p + 0);
-    double res = *((double*)ar);
-    return res;
+std::string su_from_name(const std::string name) {
+    std::string su;
+//    if ((name == "Iпр") || (name == "Iобр")) {
+//        su = "А";
+//    } else if ((name == "Uпр") || (name == "Uобр")) {
+//        su = "В";
+//    }
+    if (name.find("I") != std::string::npos) {
+        su = "А";
+    } else if (name.find("U") != std::string::npos) {
+        su = "В";
+    } else if (name.find("R") != std::string::npos) {
+        su = "Ом";
+    } else if (name.find("S") != std::string::npos) {
+        su = "См";
+    }
+    return su;
 }
+
+double extract_scale_factor(const std::string su) {
+    double scale_factor = 1.0;
+    for (const auto &dimension : dimension_v) {
+        if (startsWith(su, dimension)) {
+            if (dimension_m.count(dimension) > 0) {
+                scale_factor = dimension_m.at(dimension).first / dimension_m.at(dimension).second;
+            }
+            break;
+        }
+    }
+    return scale_factor;
+}
+
 
 void FunctionsTest() {
     {
@@ -413,7 +490,6 @@ void FunctionsTest() {
         }
     }
     {
-#ifdef DIODE
         {
             QString name_ref = "Uпр";
             QString str = "Uпр1";
@@ -438,8 +514,8 @@ void FunctionsTest() {
             QString name = extract_name(str);
             ASSERT_EQUAL(name, name_ref);
         }
-#endif
-#ifdef FET
+
+
         {
             QString name_ref = "Iс";
             QString str = "Iс = 10 А";
@@ -447,8 +523,8 @@ void FunctionsTest() {
             ASSERT_EQUAL(name, name_ref);
         }
         {
-            QString name_ref = "Iс нач";
-            QString str = "Iс нач = 10 А";
+            QString name_ref = "Iс изм";
+            QString str = "Iс изм = 10 А";
             QString name = extract_name(str);
             ASSERT_EQUAL(name, name_ref);
         }
@@ -489,24 +565,23 @@ void FunctionsTest() {
             ASSERT_EQUAL(name, name_ref);
         }
         {
-            QString name_ref = "Uзи пор";
-            QString str = "Uзи пор = 10 А";
+            QString name_ref = "Uзи изм";
+            QString str = "Uзи изм = 10 В";
             QString name = extract_name(str);
             ASSERT_EQUAL(name, name_ref);
         }
         {
             QString name_ref = "Uзи";
-            QString str = "Uзи = 10 А";
+            QString str = "Uзи = 10 В";
             QString name = extract_name(str);
             ASSERT_EQUAL(name, name_ref);
         }
         {
-            QString name_ref = "Iз ут";
-            QString str = "Iз ут = 10 А";
+            QString name_ref = "Iз изм";
+            QString str = "Iз изм = 10 А";
             QString name = extract_name(str);
             ASSERT_EQUAL(name, name_ref);
         }
-#endif
     }
     {
         {
@@ -615,14 +690,34 @@ void FunctionsTest() {
         }
     }
     {
-#ifdef FET
         {
             QString test_name = "Импульсный ток стока Iс(и) max1";
             TestType test_type_ref = Test_I_DM;
-            TestType test_type = test_type_from_text(extract_testType(test_name));
+            TestType test_type = TestType_from_text(extract_testType(test_name).toStdString().c_str());
             ASSERT_EQUAL(test_type, test_type_ref);
         }
-#endif
+    }
+    {
+        {
+            std::string su_ref("А");
+            std::string su = su_from_name("Iпр");
+            ASSERT_EQUAL(su, su_ref);
+        }
+        {
+            std::string su_ref("В");
+            std::string su = su_from_name("Uзи");
+            ASSERT_EQUAL(su, su_ref);
+        }
+        {
+            std::string su_ref("Ом");
+            std::string su = su_from_name("Rси");
+            ASSERT_EQUAL(su, su_ref);
+        }
+        {
+            std::string su_ref("См");
+            std::string su = su_from_name("S");
+            ASSERT_EQUAL(su, su_ref);
+        }
     }
 //    {
 //        LOG("1_____");
@@ -654,9 +749,4 @@ void FunctionsTest() {
 //        std::vector<char> rx_ba = {1,2,3,4,5,6,7,8,9,10,11,12};
 //        buf_to_chunks(rx_ba);
 //    }
-    {
-//        volatile double res = invert_double_order(989);
-//        res = res;
-//        qCDebug(logDebug()) << res;
-    }
 }

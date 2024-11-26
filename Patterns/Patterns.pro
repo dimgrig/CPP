@@ -30,13 +30,19 @@ SOURCES += \
     Profiler.cpp \
     Sleeper.cpp \
     SmartPtr.cpp \
+    Switches.cpp \
+    Value.cpp \
+    VariantVisitor.cpp \
     Visitor.cpp \
     VisitorSerializer.cpp \
     aqp.cpp \
+    enum_macro.cpp \
+    enums.cpp \
     functions.cpp \
     macroses.cpp \
     main.cpp \
     mainwindow.cpp \
+    mixins.cpp \
     qcustomplot.cpp \
     templates.cpp \
     templates_cout.cpp
@@ -50,15 +56,21 @@ HEADERS += \
     Profiler.h \
     Sleeper.h \
     SmartPtr.h \
+    Switches.h \
     TestRunner.h \
+    Value.h \
+    VariantVisitor.h \
     Visitor.h \
     VisitorSerializer.h \
     aqp.h \
+    enum_macro.h \
+    enums.h \
     functions.h \
     icons.h \
     interfaces.h \
     macroses.h \
     mainwindow.h \
+    mixins.h \
     qcustomplot.h \
     templates.h \
     templates_cout.h

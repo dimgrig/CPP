@@ -19,6 +19,7 @@
 std::string to_string_exact(double x, bool fixed = true, int precision = 3);
 bool string_replace(std::string& str, const std::string& from, const std::string& to);
 int round_up_to_value(int value, int value_to_round);
+int round_down_to_value(int value, int value_to_round);
 bool startsWith(std::string mainStr, std::string toMatch);
 std::vector<std::string> split(std::string strToSplit, char delimeter);
 double extract_double(QString str);
@@ -32,8 +33,8 @@ QString extract_standardUnit(const QString str);
 QString extract_dimension(const QString str);
 unsigned int extract_connectorPin(const QString str);
 double extract_tolerance(const QString str);
-
-double invert_double_order(double value);
+std::string su_from_name(const std::string name);
+double extract_scale_factor(const std::string su);
 
 std::string TRANSLATION_EN_RU(std::string EN);
 
@@ -60,7 +61,7 @@ static std::map<std::string, std::string> translations_RU_EN {
     {"МОм", "MOhm"},
     {"кОм", "kOhm"},
     {"Ом", "Ohm"},
-    {"мАОм", "mOhm"},
+    {"мОм", "mOhm"},
     {"мкОм", "uOhm"},
     {"нОм", "nOhm"},
 
