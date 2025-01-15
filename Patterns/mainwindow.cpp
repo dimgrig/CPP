@@ -10,6 +10,7 @@
 #include "VariantVisitor.h"
 #include "Visitor.h"
 #include "VisitorSerializer.h"
+#include "TemplateTricks.h"
 
 const int StatusTimeout = AQP::MSecPerSecond * 10;
 
@@ -31,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     RUN_TEST(tr, VariantVisitorTest);
 //    RUN_TEST(tr, VisitorTest);
 //    RUN_TEST(tr, VisitorSerializerTest);
+    RUN_TEST(tr, TemplateTricksTest);
 
     this->setFont(QFont("Noto Sans", 10)); //10
     //qCDebug(logDebug()) << this->font();

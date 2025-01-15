@@ -54,6 +54,7 @@ compile_commands.json
 qmake-rmo-version.pri
 
 #binaries folder
+/Patterns-binaries/
 /*/*-binaries/
 /*/*-build/
 /*/build-*/

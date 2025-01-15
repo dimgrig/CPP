@@ -31,6 +31,7 @@ SOURCES += \
     Sleeper.cpp \
     SmartPtr.cpp \
     Switches.cpp \
+    TemplateTricks.cpp \
     Value.cpp \
     VariantVisitor.cpp \
     Visitor.cpp \
@@ -57,6 +58,7 @@ HEADERS += \
     Sleeper.h \
     SmartPtr.h \
     Switches.h \
+    TemplateTricks.h \
     TestRunner.h \
     Value.h \
     VariantVisitor.h \
