@@ -105,20 +105,28 @@ MainWindow::MainWindow(QWidget *parent)
                        "Текст текст текст текст текст текст. "
                        "Текст текст текст текст текст текст. "
                        "Текст текст текст текст текст текст. "
-                       "Текст текст текст текст текст текст. \n"
-                        "Таблица 1 - Подпись таблицы";
-        QVector<QVector<QString>> tableData = {
+                       "Текст текст текст текст текст текст. \n";
+        QString table_caption = "Таблица 1 - Подпись таблицы";
+        QVector<QVector<QString>> table_data = {
             {"Столбец 1", "Столбец 2", "Столбец 3"},
             {"Данные 1", "Данные 2", "Данные 3"},
             {"Данные 4", "Данные 5", "Данные 6"}
         };
+        QString formula_caption = "Математическая формула: \n";
+        QString formula = "x<sub>1,2</sub> = (−b ± (b<sup>2</sup> − 4ac)<sup>1/2</sup>) / 2a</p>";
 
         // Экспорт в .docx
         DocxExporter exporter;
         //QString fileName = QFileDialog::getSaveFileName(nullptr, "Сохранить файл", "", "Word Files (*.docx)");
         QString fileName = "123.docx";
         if (!fileName.isEmpty()) {
-            if (exporter.exportToDocx(fileName, text, tableData)) {
+            QTextDocument document;
+            exporter.exportTextToDocx(document, text);
+            exporter.exportTableToDocx(document, table_caption, table_data);
+            exporter.exportFormulaToDocx(document, formula_caption, formula);
+            exporter.exportTextToDocx(document, text);
+            exporter.exportTableToDocx(document, table_caption, table_data);
+            if (exporter.write(fileName, document)) {
                 qDebug(logDebug) << "Файл успешно сохранен!";
             } else {
                 qDebug(logDebug) << "Ошибка при сохранении файла!";

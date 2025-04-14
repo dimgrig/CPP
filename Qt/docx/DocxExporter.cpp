@@ -8,60 +8,18 @@ DocxExporter::DocxExporter() {
 
 }
 
-bool DocxExporter::exportToDocx(const QString &fileName, const QString &text, const QVector<QVector<QString>> &tableData) {
-    QTextDocument document;
-    //document.setIndentWidth(1);
-    //document.setTextWidth(1);
-    //document.setDocumentMargin(10);
-
-    // Добавляем текст в документ
-    QTextCursor cursor(&document);
-    QTextCharFormat tf;
-    tf.setFont(QFont("Arial", 14));
-    cursor.insertText(text, tf);
-
+bool DocxExporter::write(const QString &fileName, QTextDocument &document) {
     //блок - по сути абзац, margin - каждого абзаца
     QTextCursor style_cursor(&document);
     do{
-        // auto frame = style_cursor.currentFrame();
-        // QTextFrameFormat ff = frame->frameFormat();
-        // ff.setBottomMargin(200);
-        // ff.setTopMargin(15);
-        // ff.setLeftMargin(30);
-        // ff.setRightMargin(200);
-        // frame->setFrameFormat(ff);
-
-        // auto list = style_cursor.currentList();
-        // QTextListFormat lf = list->format();
-        // lf.setIndent(120);
-        // list->setFormat(lf);
-
         QTextBlockFormat bf = style_cursor.blockFormat();
         bf.setAlignment(Qt::AlignJustify);
         bf.setIndent(0);
         bf.setTextIndent(47.5); // first line in the block (38 - 1 cm???, 47.5 - 1.26cm)
         bf.setLineHeight(10, QTextBlockFormat::LineDistanceHeight); // interval
-        // bf.setBottomMargin(0);
-        // bf.setTopMargin(15);
-        // bf.setLeftMargin(40);
-        // bf.setRightMargin(0);
         bf.setNonBreakableLines(true);
         style_cursor.setBlockFormat(bf);
     } while(style_cursor.movePosition(QTextCursor::NextBlock));
-
-    // //Добавляем таблицу в документ
-    if (!tableData.isEmpty()) {
-        insertTable(cursor, tableData);
-    }
-
-    // // Сохраняем документ в формате .odt - works
-    // QTextDocumentWriter writer(fileName);
-    // writer.setFormat("odt");
-    // bool res = writer.write(&document);
-    // if (!res) {
-    //     qCDebug(logDebug) << writer.device()->errorString();
-    // }
-    // return res;
 
     // Сохраняем документ в формате .docx
     QTextDocumentWriter writer(fileName);
@@ -71,6 +29,28 @@ bool DocxExporter::exportToDocx(const QString &fileName, const QString &text, co
         qCDebug(logDebug) << writer.device()->errorString();
     }
     return res;
+}
+
+void DocxExporter::exportTextToDocx(QTextDocument &document, const QString &text) {
+    // Добавляем текст в документ
+    QTextCursor cursor(&document);
+    cursor.movePosition(QTextCursor::End);
+    QTextCharFormat tf;
+    tf.setFont(QFont("Arial", 14));
+    cursor.insertText(text, tf);
+}
+
+void DocxExporter::exportTableToDocx(QTextDocument &document, const QString &caption, const QVector<QVector<QString>> &tableData) {
+    // Добавляем текст в документ
+    QTextCursor cursor(&document);
+    cursor.movePosition(QTextCursor::End);
+    QTextCharFormat tf;
+    tf.setFont(QFont("Arial", 14));
+    cursor.insertText(caption, tf);
+    // //Добавляем таблицу в документ
+    if (!tableData.isEmpty()) {
+        insertTable(cursor, tableData);
+    }
 }
 
 void DocxExporter::insertTable(QTextCursor &cursor, const QVector<QVector<QString>> &tableData) {
@@ -97,4 +77,15 @@ void DocxExporter::insertTable(QTextCursor &cursor, const QVector<QVector<QStrin
 
     // Перемещаем курсор после таблицы
     cursor.movePosition(QTextCursor::End);
+}
+
+void DocxExporter::exportFormulaToDocx(QTextDocument &document, const QString &caption, const QString &formula) {
+    // Добавляем текст в документ
+    QTextCursor cursor(&document);
+    cursor.movePosition(QTextCursor::End);
+    QTextCharFormat tf;
+    tf.setFont(QFont("Arial", 14));
+    cursor.insertText(caption, tf);
+    cursor.insertHtml(formula);
+    cursor.insertText(".\n", tf);
 }

@@ -23,9 +23,11 @@ DEFINES += NOUSER
 
 SOURCES += \
     Config.cpp \
+    DerivedModel.cpp \
     Logger.cpp \
     Profiler.cpp \
     Sleeper.cpp \
+    SourceModel.cpp \
     aqp.cpp \
     database.cpp \
     functions.cpp \
@@ -38,9 +40,11 @@ SOURCES += \
 
 HEADERS += \
     Config.h \
+    DerivedModel.h \
     Logger.h \
     Profiler.h \
     Sleeper.h \
+    SourceModel.h \
     TestRunner.h \
     aqp.h \
     database.h \

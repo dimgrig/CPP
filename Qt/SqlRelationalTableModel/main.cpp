@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
 
     MainWindow w;
     //splash.close();
-    w.show();    
+    w.show();
     splash.finish(&w);
     //w.init_auth_users();
 

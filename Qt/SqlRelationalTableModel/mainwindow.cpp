@@ -5,6 +5,9 @@
 
 const int StatusTimeout = AQP::MSecPerSecond * 10;
 
+#include "SourceModel.h"
+#include "DerivedModel.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -129,6 +132,22 @@ MainWindow::MainWindow(QWidget *parent)
         /* Инициализируем внешний вид таблицы с данными
      * */
         this->createUI();
+    }
+
+    {
+        // Создаем исходную модель
+        SourceModel *sm = new SourceModel(this);
+
+        // Создаем производную модель
+        DerivedModel *dm = new DerivedModel(sm);
+
+        // Создаем представления для обеих моделей
+        this->ui->tableViewSource->setModel(sm);
+
+        this->ui->tableViewDerived->setModel(dm);
+    }
+    {
+
     }
 }
 
